@@ -1,0 +1,24 @@
+{
+  "name": "rc-auth",
+  "version": "1.0.0",
+  "description": "RC Auth",
+  "main": "src/main.js",
+  "type": "module",
+  "config": {
+    "node_args": "--env-file=.env --title=rc-auth"
+  },
+  "scripts": {
+    "start": "node $npm_package_config_node_args src/main.js",
+    "dev": "nodemon $npm_package_config_node_args src/main.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "node-fetch": "^3.3.2",
+    "simple-oauth2": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
