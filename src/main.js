@@ -3,7 +3,7 @@ import session from 'express-session';
 import cors from 'cors';
 import http from 'http';
 
-import { authRouter } from './auth.js';
+import { authRouter, refreshTokenMiddleware } from './auth.js';
 import { rcRouter } from './rc.js';
 
 const app = express();
@@ -40,7 +40,8 @@ app.use(session({
 // Routes
 app.use('/', authRouter);
 
-app.use('/api', rcRouter);
+// Apply refresh token middleware *before* the rcRouter for all /api routes
+app.use('/api', refreshTokenMiddleware, rcRouter);
 
 app.get('/', async (req, res) => {
     if (req.session && req.session.token) {

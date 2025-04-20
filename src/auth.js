@@ -108,4 +108,5 @@ authRouter.use(refreshTokenMiddleware);
 
 export {
     authRouter,
+    refreshTokenMiddleware
 }; 

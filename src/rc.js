@@ -103,4 +103,47 @@ rcRouter.get('/batches/:batchId/profiles', async (req, res) => {
     }
 });
 
+// Helper function to fetch all batches
+async function fetchAllBatches(token) {
+    if (!token) { throw new Error('Authentication token is required.'); }
+
+    const batchesUrl = `${process.env.RC_API_BASE_URL}/batches`;
+    console.log(`Fetching all batches from ${batchesUrl}`);
+
+    const response = await fetch(batchesUrl, {
+        headers: makeFetchHeaders(token)
+    });
+    if (!response.ok) {
+        const errorBody = await response.text();
+        console.error(`fetchAllBatches failed (${response.status}): ${errorBody}`);
+        throw new Error(`Failed to fetch batches: ${response.status}`);
+    }
+
+    return await response.json();
+}
+
+// An endpoint to fetch all batches
+rcRouter.get('/v1/batches', async (req, res) => {
+    console.log(`GET: /v1/batches hit`);
+
+    if (!req.accessToken) {
+        console.error('/v1/batches: No access token found.');
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    try {
+        const batches = await fetchAllBatches(req.accessToken);
+        console.log(`Successfully fetched ${batches.length} batches.`);
+        res.json(batches);
+    } catch (error) {
+        console.error(`Error fetching all batches:`, error);
+
+        if (error.message.includes('401')) {
+            res.status(401).json({ error: 'Authentication failed or token invalid for fetching batches.' });
+        } else {
+            res.status(500).json({ error: `Could not load batches: ${error.message}` });
+        }
+    }
+});
+
 export { rcRouter };
